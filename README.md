@@ -39,8 +39,7 @@ plot_frontier()
 ````julia
 m=markowitz(E, V, names=assets, #  asset bounds by class: eq -10/30, fi 0/20, alt 0/10
             lower = -0.1 * (class .== :EQ),
-
-upper = 0.3 * (class .== :EQ) + 0.2 * (class .== :FI) + 0.1 * (class .== :ALT))
+	    upper = 0.3 * (class .== :EQ) + 0.2 * (class .== :FI) + 0.1 * (class .== :ALT))
 unit_sum(m)
 add_constraint(m, 1 * (class .== :EQ), '>', 0.3) # net equity exposure between 30% and 60%
 add_constraint(m, 1 * (class .== :EQ), '<', 0.6)
