@@ -1,5 +1,5 @@
 using Markowitz
-using Plots
+import Plots
 
 assets = [ "Bonds - US Government"
            "Bonds - US Corporate"
@@ -87,7 +87,7 @@ function plot_frontier()
     wrange = [ wrange[1], wrange[1] + 2.5*(wrange[2]-wrange[1])]
     ylong = [ zeros(size(extweights,1),1) cumsum((extweights.>0) .* (extweights),2) ]
     yshort = [ zeros(size(extweights,1),1) cumsum((extweights.<0) .* (extweights),2) ]
-    p2 = Plots.plot(legend=:right, background_color_legend="#ffffff00", legendfont=font(5), grid=nothing)
+    p2 = Plots.plot(legend=:right, background_color_legend="#ffffff00", legendfont=Plots.font(5), grid=nothing)
     Plots.xticks!([0,0.5,1])
     for i = 1:(size(ylong,2)-1)
         Plots.plot!(Plots.Shape([ vec(ylong[:,i]); reverse(vec(ylong[:,i+1])) ], [ extret; reverse(extret)]),
@@ -99,7 +99,7 @@ function plot_frontier()
     end
     Plots.xlims!(Tuple(wrange))
     Plots.ylims!(Tuple(yrange))
-    plot(p1, p2, size=(800, 400))
+    Plots.plot(p1, p2, size=(800, 400))
 end
 
 
