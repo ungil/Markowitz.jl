@@ -45,7 +45,7 @@ function simplex(mu,A,b,L,U,epsilon=1e-10)
                     end
                 end
                 return(Dict(:IN => IN, :OUT => OUT, :state => state[1:n],
-                            :x => x[1:n], :Ai => Ai, :mu => muChanged?mu:nothing))
+                            :x => x[1:n], :Ai => Ai, :mu => muChanged ? mu : nothing))
             end
         end
         enters = OUT[indmax(profit)]

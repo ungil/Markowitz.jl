@@ -34,7 +34,7 @@ V = [ 133.0  39.0  36.0  -17.0  -28.0   31.0   -5.0   -6.0  -34.0  -10.0  -46.0 
 E = [ 0.1 0.7 0.8 2.3 2.2 1.9 5.6 5.6 2.2 1.3 0.7 -0.1 4.1 7.2 ]
 
 class = vec([ :FI :FI :FI :FI :FI :FI :FI :ALT :ALT :ALT :EQ :EQ :EQ :EQ ])
-colors = map(c-> c==:FI?"blue":(c==:ALT?"green":"red"),class)
+colors = map(c-> c==:FI ? "blue" : (c==:ALT ? "green" : "red"),class)
 alphas = 0.5 + 0.5*[ (1:7)/7 ; (1:3)/3 ; (1:4)/4 ]
     
 function plot_frontier()
