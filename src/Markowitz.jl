@@ -284,7 +284,7 @@ function markowitz(E::Union{Vector,Matrix},V::Matrix;lower=0,upper=Inf,names=[])
         upper = upper*ones(n)
     end
     Form0(V,vec(E),vec(lower),vec(upper),vec(names),
-          Matrix{Float64}(undef,0,n),Vector{Symbol}(0),Vector{Float64}(0))
+          Matrix{Float64}(undef,0,n),Vector{Symbol}(undef,0),Vector{Float64}(undef,0))
 end
 
 function add_constraint(m::Form0,lhs::Vector,op::Char,rhs::Number)
