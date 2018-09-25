@@ -35,7 +35,7 @@ E = [ 0.1 0.7 0.8 2.3 2.2 1.9 5.6 5.6 2.2 1.3 0.7 -0.1 4.1 7.2 ]
 
 class = vec([ :FI :FI :FI :FI :FI :FI :FI :ALT :ALT :ALT :EQ :EQ :EQ :EQ ])
 colors = map(c-> c==:FI ? "blue" : (c==:ALT ? "green" : "red"),class)
-alphas = 0.5 + 0.5*[ (1:7)/7 ; (1:3)/3 ; (1:4)/4 ]
+alphas = 0.5 .+ 0.5*[ (1:7)/7 ; (1:3)/3 ; (1:4)/4 ]
     
 function plot_frontier()
     m = f.problem
