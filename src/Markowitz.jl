@@ -11,9 +11,9 @@ function simplex(mu,A,b,L,U,epsilon=1e-10)
     U = [ U; Inf*ones(m) ]
     z = zeros(n+m)
     x = zeros(n+m)
-    state = Vector{Symbol}(n+m)
+    state = Vector{Symbol}(undef,n+m)
     nartificial = m
-    adjRate = Vector{Float64}(n+m)
+    adjRate = Vector{Float64}(undef,n+m)
     phase = 1
     OUT = 1:n
     state[OUT] = :LOW
@@ -147,9 +147,9 @@ function cla(C,mu,A,b,L,U,epsilon=1e-10,lambdaTarget=1e-6)
     lambdaE = Inf
     lambdaEold = NaN
     weights = Array{Float64}(undef,0,n)
-    ret = Vector{Float64}(0)
-    vol = Vector{Float64}(0)
-    lambda = Vector{Float64}(0)
+    ret = Vector{Float64}(undef,0)
+    vol = Vector{Float64}(undef,0)
+    lambda = Vector{Float64}(undef,0)
     simp = simplex(mu,A,b,L,U,epsilon)
     if simp[:mu] != nothing; mu = simp[:mu]; end
     x = simp[:x]
