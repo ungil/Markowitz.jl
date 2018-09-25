@@ -1,4 +1,5 @@
 using Markowitz
+using LinearAlgebra
 import Plots
 
 assets = [ "Bonds - US Government"
