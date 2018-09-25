@@ -1,4 +1,5 @@
 module Markowitz
+using LinearAlgebra
 
 export markowitz, unit_sum, add_constraint, frontier, smooth, optimal
 
