@@ -44,7 +44,6 @@ function plot_frontier()
     xrange = [0, max(maximum(sqrt.(diag(m.V))),maximum(f.vol))]*1.1
     yrange = [minimum(m.E),max(maximum(m.E),maximum(f.ret))]+(maximum(m.E)-minimum(m.E))*[-1,1]*0.1
     dense = smooth(f)
-    Plots.plotly()
     p1 = Plots.plot(dense[:,1], dense[:,2], legend=false, label="", color="orange", width=2)
     for i = 1:length(m.E)
         Plots.scatter!([sqrt.(diag(m.V)[i])], [m.E[i]], label=m.names[i],

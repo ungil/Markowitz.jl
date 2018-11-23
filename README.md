@@ -9,7 +9,7 @@ This implementation is based on the 2000 edition of the book [Mean-Variance Anal
 ## Installation
 
 ````julia
-Pkg.clone("https://github.com/ungil/Markowitz.jl.git")
+(v1.0) pkg> add https://github.com/ungil/Markowitz.jl.git
 ````
 
 ## Getting started
