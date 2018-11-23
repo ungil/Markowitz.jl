@@ -37,13 +37,14 @@ E = [ 0.1 0.7 0.8 2.3 2.2 1.9 5.6 5.6 2.2 1.3 0.7 -0.1 4.1 7.2 ]
 class = vec([ :FI :FI :FI :FI :FI :FI :FI :ALT :ALT :ALT :EQ :EQ :EQ :EQ ])
 colors = map(c-> c==:FI ? "blue" : (c==:ALT ? "green" : "red"),class)
 alphas = 0.5 .+ 0.5*[ (1:7)/7 ; (1:3)/3 ; (1:4)/4 ]
-    
+
 function plot_frontier()
     m = f.problem
-    unused = vec(sum(f.weights,1).==0)
+    unused = vec(sum(f.weights, dims=1).==0)
     xrange = [0, max(maximum(sqrt.(diag(m.V))),maximum(f.vol))]*1.1
     yrange = [minimum(m.E),max(maximum(m.E),maximum(f.ret))]+(maximum(m.E)-minimum(m.E))*[-1,1]*0.1
     dense = smooth(f)
+    Plots.plotly()
     p1 = Plots.plot(dense[:,1], dense[:,2], legend=false, label="", color="orange", width=2)
     for i = 1:length(m.E)
         Plots.scatter!([sqrt.(diag(m.V)[i])], [m.E[i]], label=m.names[i],
@@ -84,10 +85,10 @@ function plot_frontier()
             extret = [ extret ; r0+rem(idx,1)*(r1-r0) ]
         end
     end
-    wrange = [ minimum(sum((extweights.<0) .* (extweights),2)), maximum(sum((extweights.>0) .* (extweights),2)) ]
+    wrange = [ minimum(sum((extweights.<0) .* (extweights), dims=2)), maximum(sum((extweights.>0) .* (extweights), dims=2)) ]
     wrange = [ wrange[1], wrange[1] + 2.5*(wrange[2]-wrange[1])]
-    ylong = [ zeros(size(extweights,1),1) cumsum((extweights.>0) .* (extweights),2) ]
-    yshort = [ zeros(size(extweights,1),1) cumsum((extweights.<0) .* (extweights),2) ]
+    ylong = [ zeros(size(extweights,1),1) cumsum((extweights.>0) .* (extweights), dims=2) ]
+    yshort = [ zeros(size(extweights,1),1) cumsum((extweights.<0) .* (extweights), dims=2) ]
     p2 = Plots.plot(legend=:right, background_color_legend="#ffffff00", legendfont=Plots.font(5), grid=nothing)
     Plots.xticks!([0,0.5,1])
     for i = 1:(size(ylong,2)-1)

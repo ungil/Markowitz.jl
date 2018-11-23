@@ -16,18 +16,18 @@ function simplex(mu,A,b,L,U,epsilon=1e-10)
     adjRate = Vector{Float64}(undef,n+m)
     phase = 1
     OUT = 1:n
-    state[OUT] = :LOW
+    state[OUT] .= :LOW
     x[OUT] = L[1:n]
-    z[OUT] = 0
-    IN = n + (1:m)
+    z[OUT] .= 0
+    IN = n .+ (1:m)
     tmp = b - A * L[1:n]
     for i in 1:m
         Ai[i,i] = (tmp[i]<0 ? -1 : 1)
     end
     A = hcat(A, Ai)
-    state[IN] = :IN
+    state[IN] .= :IN
     x[IN] = abs.(tmp)
-    z[IN] = -1
+    z[IN] .= -1
     loop = 0
     while loop < 10*(n+m)
         loop = loop + 1
@@ -41,7 +41,7 @@ function simplex(mu,A,b,L,U,epsilon=1e-10)
                 for i in 1:length(OUT)
                     if profit[i] > -epsilon
                         muChanged = true
-                        warn("tweaking mu[$i] to ensure the solution is unique")
+                        @warn "tweaking mu[$i] to ensure the solution is unique"
                         mu[OUT[i]] = mu[OUT[i]] + epsilon * (state[OUT[i]] == :LOW ? -1 : 1)
                     end
                 end
@@ -49,7 +49,7 @@ function simplex(mu,A,b,L,U,epsilon=1e-10)
                             :x => x[1:n], :Ai => Ai, :mu => muChanged ? mu : nothing))
             end
         end
-        enters = OUT[indmax(profit)]
+        enters = OUT[argmax(profit)[2]]
         directionIn = (state[enters]==:HIGH ? (:DOWN) : (:UP))
         adjRate = -Ai * A[:,enters] * (directionIn==:DOWN ? -1 : 1)
         exits = enters
@@ -99,7 +99,7 @@ function simplex(mu,A,b,L,U,epsilon=1e-10)
                 end
             end
             Ai[exitsIdx,:] = Ai[exitsIdx,:] / adjRate[exitsIdx] * (directionIn==:UP ? -1 : 1)
-            entersIdx = find(IN .== enters)[1]
+            entersIdx = findall(IN .== enters)[1]
             if entersIdx > exitsIdx
                 tmp = Ai[exitsIdx,:]
                 for i in exitsIdx:(entersIdx-1)
@@ -158,7 +158,7 @@ function cla(C,mu,A,b,L,U,epsilon=1e-10,lambdaTarget=1e-6)
     state = simp[:state]
     Ai = simp[:Ai]
     alpha[[ state.!=:IN; falses(m) ]] = x[state.!=:IN]
-    IN=[IN; n+(1:m)]
+    IN = [IN; n.+(1:m)]
     for in in IN
         bbar[in] = (in <= n ? 0 : b[in-n]) - dot(M[in,OUT], x[OUT])
     end
@@ -166,6 +166,11 @@ function cla(C,mu,A,b,L,U,epsilon=1e-10,lambdaTarget=1e-6)
     Mi = [ zeros(n,n)           extAi            ;
            extAi'     -Ai'*C[IN[1:m],IN[1:m]]*Ai ]
     loop = 0
+    E = undef
+    V = undef
+    a0 = undef
+    a1 = undef
+    a2 = undef
     while (loop < 10*(n+m))
         loop = loop + 1
         changes = []
@@ -191,7 +196,7 @@ function cla(C,mu,A,b,L,U,epsilon=1e-10,lambdaTarget=1e-6)
         end
         changes = sort(changes,by=x->-x.lambda)
         if length(changes) > 1 && changes[1].lambda == changes[2].lambda
-            warn("more than one variable change could be done, will continue but note that the degenerate case is not properly handled")
+            @warn "more than one variable change could be done, will continue but note that the degenerate case is not properly handled"
         end
         lambdaEold = lambdaE
         if length(changes) > 0
@@ -299,7 +304,7 @@ function add_constraint(m::Form0,lhs::Matrix,op::Char,rhs::Number)
 end
 
 function unit_sum(m::Form0)
-    add_constraint(m, ones(m.E), '=', 1)
+    add_constraint(m, ones(length(m.E)), '=', 1)
 end
 
 struct Form2
@@ -363,7 +368,7 @@ end
 
 function simplex(m::Form2)
     simplex(m.E,m.A,m.b,m.lower,m.upper)
-end    
+end
 
 function frontier(m::Form2,form0=nothing)
     weights,ret,vol,lambda = cla(m.V,m.E,m.A,m.b,m.lower,m.upper)
@@ -372,15 +377,15 @@ function frontier(m::Form2,form0=nothing)
     else
         Frontier(weights[:,1:length(form0.E)],ret,vol,lambda,form0)
     end
-end    
+end
 
 function simplex(m::Form0)
     simplex(form2(m))
-end    
+end
 
 function frontier(m::Form0)
     frontier(form2(m),m)
-end    
+end
 
 function smooth(f,N=100)
     frontier = [ f.vol[1] f.ret[1] ]
