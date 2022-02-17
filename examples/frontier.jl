@@ -38,7 +38,7 @@ class = vec([ :FI :FI :FI :FI :FI :FI :FI :ALT :ALT :ALT :EQ :EQ :EQ :EQ ])
 colors = map(c-> c==:FI ? "blue" : (c==:ALT ? "green" : "red"),class)
 alphas = 0.5 .+ 0.5*[ (1:7)/7 ; (1:3)/3 ; (1:4)/4 ]
 
-function plot_frontier()
+function plot_frontier(f)
     m = f.problem
     unused = vec(sum(f.weights, dims=1).==0)
     xrange = [0, max(maximum(sqrt.(diag(m.V))),maximum(f.vol))]*1.1
@@ -70,7 +70,7 @@ function plot_frontier()
         indices = [indices ; i]
     end
     extweights = zeros(0,size(weights,2))
-    extret = []
+    extret = Float64[]
     for idx in sort(indices)
         if rem(idx,1) == 0
             extweights = [ extweights ; weights[[Int(idx)],:] ]
@@ -91,11 +91,11 @@ function plot_frontier()
     p2 = Plots.plot(legend=:right, background_color_legend="#ffffff00", legendfont=Plots.font(5), grid=nothing)
     Plots.xticks!([0,0.5,1])
     for i = 1:(size(ylong,2)-1)
-        Plots.plot!(Plots.Shape([ vec(ylong[:,i]); reverse(vec(ylong[:,i+1])) ], [ extret; reverse(extret)]),
+        Plots.plot!(Plots.Shape([ vec(ylong[:,i]); reverse(vec(ylong[:,i+1])) ], [ extret; reverse(extret) ]),
                     color=colors[.!unused][i], alpha=alphas[.!unused][i], label=m.names[.!unused][i])
     end
     for i = 1:(size(yshort,2)-1)
-        Plots.plot!(Plots.Shape([ vec(yshort[:,i]); reverse(vec(yshort[:,i+1])) ], [ extret; reverse(extret)]),
+        Plots.plot!(Plots.Shape([ vec(yshort[:,i]); reverse(vec(yshort[:,i+1])) ], [ extret; reverse(extret) ]),
                     color=colors[.!unused][i],alpha=alphas[.!unused][i], label="")
     end
     Plots.xlims!(Tuple(wrange))
@@ -107,7 +107,7 @@ end
 m = markowitz(E, V, names=assets)
 unit_sum(m) # total weight = 100%
 f=frontier(m)
-plot_frontier()
+plot_frontier(f)
 optimal(f) # volatility, return and weights for the minimum variance portofolio
 optimal(f,4) # volatility, return and weights for the optimal portofolio with return = 4
 
@@ -115,7 +115,7 @@ optimal(f,4) # volatility, return and weights for the optimal portofolio with re
 m=markowitz(E, V, names=assets, lower=0.05, upper=0.15) # min 5%, max 15% per position
 unit_sum(m)
 f=frontier(m)
-plot_frontier()
+plot_frontier(f)
 
 
 m=markowitz(E, V, names=assets, # asset bounds by class: stocks -10/30, bonds 0/20, alt. 0/10
@@ -126,4 +126,4 @@ add_constraint(m, 1 * (class .== :EQ), '>', 0.3) # net equity exposure between 3
 add_constraint(m, 1 * (class .== :EQ), '<', 0.6)
 add_constraint(m, [1 1 0 0 0 0 0 0 0 0 0 0 0 0], '=', 0.25) # US govt + Investment Grade = 25%
 f=frontier(m)
-plot_frontier()
+plot_frontier(f)
